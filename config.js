@@ -11,6 +11,12 @@ module.exports = {
     url: process.env.IDENA_URL,
     key: process.env.IDENA_KEY,
   },
+  logs: {
+    output: process.env.LOGS_OUTPUT,
+    format:
+      ':date[iso] - :apiKey - :status - :response-time ms - :body - :res[content-length]',
+    file: 'access.log',
+  },
   methods: [
     'dna_identity',
     'dna_ceremonyIntervals',
