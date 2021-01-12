@@ -32,6 +32,8 @@ module.exports = {
     'flip_privateEncryptionKeyCandidates',
     'flip_sendPrivateEncryptionKeysPackage',
     'flip_sendPublicEncryptionKey',
+    'flip_wordPairs',
+    'flip_rawSubmit',
     'bcn_syncing',
     'bcn_getRawTx',
     'bcn_sendRawTx',
