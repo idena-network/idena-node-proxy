@@ -38,5 +38,6 @@ module.exports = {
     'bcn_getRawTx',
     'bcn_sendRawTx',
     'bcn_transaction',
+    'ipfs_cid',
   ],
 };
