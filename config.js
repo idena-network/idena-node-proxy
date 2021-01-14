@@ -34,6 +34,7 @@ module.exports = {
     'flip_sendPublicEncryptionKey',
     'flip_wordPairs',
     'flip_rawSubmit',
+    'ipfs_cid',
     'bcn_syncing',
     'bcn_getRawTx',
     'bcn_sendRawTx',
