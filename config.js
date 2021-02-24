@@ -38,6 +38,12 @@ module.exports = {
     'bcn_getRawTx',
     'bcn_sendRawTx',
     'bcn_transaction',
+    'bcn_txReceipt',
     'ipfs_cid',
+    'contract_estimateDeploy',
+    'contract_deploy',
+    'contract_call',
+    'contract_terminate',
+    'contract_readData'
   ],
 };
