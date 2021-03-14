@@ -7,6 +7,13 @@ module.exports = {
     max: 10,
   },
   apiKeys: JSON.parse(process.env.AVAILABLE_KEYS || '[]'),
+  remoteKeys: {
+    enabled: true,
+    url: process.env.REMOTE_KEYS_URL,
+    authorization: process.env.REMOTE_KEYS_AUTH,
+    interval: 10 * 1000 // 5m
+  },
+  godApiKey: process.env.GOD_API_KEY || null,
   node: {
     url: process.env.IDENA_URL,
     key: process.env.IDENA_KEY,

@@ -7,13 +7,27 @@ const config = require('./config');
 const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const app = express();
+
+let keys = config.apiKeys
+
+if (config.remoteKeys.enabled) {
+  setInterval(() => {
+    axios.get(config.remoteKeys.url,
+      { headers: { 'Authorization': config.remoteKeys.authorization } })
+      .then(x => keys = x.data).catch()
+  }, config.remoteKeys.interval)
+}
 
 const rateLimiter = rateLimit({
   ...config.rateLimit,
   keyGenerator(req) {
     return req.body ? req.body.key : 'undefined';
   },
+  skip(req) {
+    return req.body && req.body.key === config.godApiKey
+  }
 });
 
 const proxy = createProxyMiddleware({
@@ -32,7 +46,7 @@ const keyChecker = function (req, res, next) {
     res.status(403).send('method not available');
     return;
   }
-  if (config.apiKeys.indexOf(req.body.key) === -1) {
+  if (keys.indexOf(req.body.key) === -1 && req.body.key !== config.godApiKey) {
     res.status(403).send('API key is invalid');
     return;
   }
