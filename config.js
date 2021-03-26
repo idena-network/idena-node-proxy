@@ -8,7 +8,7 @@ module.exports = {
   },
   apiKeys: JSON.parse(process.env.AVAILABLE_KEYS || '[]'),
   remoteKeys: {
-    enabled: true,
+    enabled: !!+process.env.REMOTE_KEYS_ENABLED,
     url: process.env.REMOTE_KEYS_URL,
     authorization: process.env.REMOTE_KEYS_AUTH,
     interval: 5 * 60 * 1000 // 5m
