@@ -11,7 +11,7 @@ module.exports = {
     enabled: true,
     url: process.env.REMOTE_KEYS_URL,
     authorization: process.env.REMOTE_KEYS_AUTH,
-    interval: 10 * 1000 // 5m
+    interval: 5 * 60 * 1000 // 5m
   },
   godApiKey: process.env.GOD_API_KEY || null,
   node: {
