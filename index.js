@@ -12,12 +12,15 @@ const app = express();
 
 let keys = config.apiKeys
 
+function loadRemoteKeys() {
+  axios.get(config.remoteKeys.url,
+    { headers: { 'Authorization': config.remoteKeys.authorization } })
+    .then(x => keys = x.data).catch()
+}
+
 if (config.remoteKeys.enabled) {
-  setInterval(() => {
-    axios.get(config.remoteKeys.url,
-      { headers: { 'Authorization': config.remoteKeys.authorization } })
-      .then(x => keys = x.data).catch()
-  }, config.remoteKeys.interval)
+  loadRemoteKeys()
+  setInterval(loadRemoteKeys, config.remoteKeys.interval)
 }
 
 const rateLimiter = rateLimit({
