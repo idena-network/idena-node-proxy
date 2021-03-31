@@ -1,0 +1,47 @@
+{
+    "port": 3000,
+    "rateLimit": {
+        "windowMs": 1000,
+        "max": 10
+    },
+    "apiKeys": [],
+    "remoteKeys": {
+        "enabled": false,
+        "url": null,
+        "authorization": null,
+        "interval": 300000
+    },
+    "godApiKey": null,
+    "node": {
+        "url": null,
+        "key": null
+    },
+    "logs": {
+        "output": "stdout",
+        "format": ":date[iso] - :apiKey - :status - :response-time ms - :body - :res[content-length]",
+        "file": "access.log"
+    },
+    "methods": [
+        "dna_identity",
+        "dna_ceremonyIntervals",
+        "dna_epoch",
+        "dna_isValidationReady",
+        "dna_wordsSeed",
+        "dna_getBalance",
+        "flip_getRaw",
+        "flip_getKeys",
+        "flip_words",
+        "flip_shortHashes",
+        "flip_longHashes",
+        "flip_privateEncryptionKeyCandidates",
+        "flip_sendPrivateEncryptionKeysPackage",
+        "flip_sendPublicEncryptionKey",
+        "flip_wordPairs",
+        "flip_rawSubmit",
+        "bcn_syncing",
+        "bcn_getRawTx",
+        "bcn_sendRawTx",
+        "bcn_transaction",
+        "ipfs_cid"
+    ]
+}
