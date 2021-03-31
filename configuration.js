@@ -9,7 +9,6 @@ const configPath = process.env.CONFIG_PATH || "./config.json"
 if (fs.existsSync(configPath)) {
   const result = fs.readFileSync(configPath)
   const parsed = JSON.parse(result)
-  console.log(parsed)
   config = merge(config, parsed)
 }
 

@@ -8,11 +8,31 @@ Start the local server
 
 ## Run as Docker
 
-You can build your own docker file or get image from `idena/node-proxy:latest`   
+You can build your own docker file or get image from `idena/node-proxy:latest` or by tag `idena/node-proxy:v1.0.0`
+
+### Docker compose example
+
+```
+version: "3.8"
+services:
+  proxy-test:
+    image: idena/node-proxy:v1.0.0
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config.json:/home/node/app/config.json
+      - ./access.log:/home/node/app/access.log
+    environment:
+      NODE_ENV: "production"
+
+```
 
 ## Configuration
 
 To configure proxy you can use `config.json` file or set custom path with `CONFIG_PATH` environmental variable.
+
+Log can have `stdout` or `file` output.
 
 Default configuration:
 
