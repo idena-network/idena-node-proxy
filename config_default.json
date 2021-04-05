@@ -42,6 +42,7 @@
         "bcn_getRawTx",
         "bcn_sendRawTx",
         "bcn_transaction",
-        "ipfs_cid"
+        "ipfs_cid",
+        "contract_getStake"
     ]
 }
