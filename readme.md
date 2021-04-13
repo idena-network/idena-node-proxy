@@ -86,6 +86,26 @@ Default configuration:
 }
 ```
 
+### Remote keys
+You can use `remoteKeys` parameter to update the list of api keys from a specific URL automatically.
+
+```
+    "remoteKeys": {
+        "enabled": true,
+        "url": http://localhost:1234/my-api-keys,
+        "authorization": null,
+        "interval": 300000
+    },
+```
+
+The node will call the `url` at the specific intervals defined in the `interval` parameter in milliseconds.
+The URL has to provide json response with array of keys as follows:
+```
+["key1", "key2", "keyN"]
+```
+Use `authorization` parameter with authorization header if needed.
+
+
 ## Old .env configuration
 
 You can use these environmental variables to configure proxy. Better to use `config.json` file instead.
