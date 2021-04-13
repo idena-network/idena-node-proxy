@@ -88,11 +88,11 @@ Default configuration:
 
 ### Remote keys
 You can use `remoteKeys` parameter to update the list of api keys from a specific URL automatically.
-
+Example:
 ```
     "remoteKeys": {
         "enabled": true,
-        "url": http://localhost:1234/my-api-keys,
+        "url": "http://localhost:1234/my-api-keys",
         "authorization": null,
         "interval": 300000
     },
