@@ -23,7 +23,7 @@ async function loadRemoteKeys() {
     try {
       keys = await axios.get(config.remoteKeys.url,
         {
-          headers: { 'Authorization': config.remoteKeys.authorization + 1 }
+          headers: { 'Authorization': config.remoteKeys.authorization }
         })
         .then(x => x.data)
       isReady = true
