@@ -10,35 +10,29 @@ const path = require('path');
 const axios = require('axios');
 const app = express();
 
-let keys
+let keys = []
 let isReady = false
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function loadRemoteKeys() {
-  let error = false
-  do {
-    try {
-      keys = await axios.get(config.remoteKeys.url,
-        {
-          headers: { 'Authorization': config.remoteKeys.authorization }
-        })
-        .then(x => x.data)
-      isReady = true
-    }
-    catch (e) {
-      console.log('Error while loading keys', e)
-      error = true
-      await sleep(1000)
-    }
-  } while(error)
+  try {
+    keys = await axios.get(config.remoteKeys.url,
+      {
+        headers: { 'Authorization': config.remoteKeys.authorization }
+      })
+      .then(x => x.data)
+
+    isReady = true
+    setTimeout(loadRemoteKeys, config.remoteKeys.interval)
+  }
+  catch (e) {
+    isReady = false
+    console.log('Error while loading keys', e)
+    setTimeout(loadRemoteKeys, 5000)
+  }
 }
 
 if (config.remoteKeys.enabled) {
   loadRemoteKeys()
-  setInterval(loadRemoteKeys, config.remoteKeys.interval)
 } else {
   keys = config.apiKeys
   isReady = true
@@ -66,15 +60,18 @@ const proxy = createProxyMiddleware({
 });
 
 const keyChecker = function (req, res, next) {
-  if (!isReady && req.body.key !== config.godApiKey) {
-    res.status(400).send('proxy is starting...');
-    return;
-  }
   if (config.methods.indexOf(req.body.method) === -1) {
     res.status(403).send('method not available');
     return;
   }
-  if (keys.indexOf(req.body.key) === -1 && req.body.key !== config.godApiKey) {
+  if (req.body.key === config.godApiKey) {
+    return next()
+  }
+  if (!isReady) {
+    res.status(400).send('proxy is not started');
+    return;
+  }
+  if (keys.indexOf(req.body.key) === -1) {
     res.status(403).send('API key is invalid');
     return;
   }
