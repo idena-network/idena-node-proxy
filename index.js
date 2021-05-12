@@ -66,7 +66,7 @@ const proxy = createProxyMiddleware({
 });
 
 const keyChecker = function (req, res, next) {
-  if (!isReady) {
+  if (!isReady && req.body.key !== config.godApiKey) {
     res.status(400).send('proxy is starting...');
     return;
   }
