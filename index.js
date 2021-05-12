@@ -10,17 +10,38 @@ const path = require('path');
 const axios = require('axios');
 const app = express();
 
-let keys = config.apiKeys
+let keys
+let isReady = false
 
-function loadRemoteKeys() {
-  axios.get(config.remoteKeys.url,
-    { headers: { 'Authorization': config.remoteKeys.authorization } })
-    .then(x => keys = x.data).catch()
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function loadRemoteKeys() {
+  let error = false
+  do {
+    try {
+      keys = await axios.get(config.remoteKeys.url,
+        {
+          headers: { 'Authorization': config.remoteKeys.authorization + 1 }
+        })
+        .then(x => x.data)
+      isReady = true
+    }
+    catch (e) {
+      console.log('Error while loading keys', e)
+      error = true
+      await sleep(1000)
+    }
+  } while(error)
 }
 
 if (config.remoteKeys.enabled) {
   loadRemoteKeys()
   setInterval(loadRemoteKeys, config.remoteKeys.interval)
+} else {
+  keys = config.apiKeys
+  isReady = true
 }
 
 const rateLimiter = rateLimit({
@@ -45,6 +66,10 @@ const proxy = createProxyMiddleware({
 });
 
 const keyChecker = function (req, res, next) {
+  if (!isReady) {
+    res.status(400).send('proxy is starting...');
+    return;
+  }
   if (config.methods.indexOf(req.body.method) === -1) {
     res.status(403).send('method not available');
     return;
