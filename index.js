@@ -60,6 +60,11 @@ const proxy = createProxyMiddleware({
 });
 
 const keyChecker = function (req, res, next) {
+  if (config.check &&
+    req.body.method === config.check.method &&
+    req.body.key === config.check.key) {
+    return next()
+  }
   if (config.methods.indexOf(req.body.method) === -1) {
     res.status(403).send('method not available');
     return;
