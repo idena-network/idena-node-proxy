@@ -51,6 +51,10 @@ Default configuration:
         "interval": 300000
     },
     "godApiKey": null,
+    "check": {
+        "key": "check-status-key",
+        "method": "dna_epoch"
+    },
     "node": {
         "url": null,
         "key": null
