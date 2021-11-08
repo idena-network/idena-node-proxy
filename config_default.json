@@ -14,7 +14,10 @@
     "godApiKey": null,
     "check": {
         "key": "check-status-key",
-        "method": "dna_epoch"
+        "methods": [
+            "dna_epoch",
+            "bcn_syncing"
+        ]
     },
     "node": {
         "url": null,
