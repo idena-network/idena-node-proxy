@@ -61,8 +61,8 @@ const proxy = createProxyMiddleware({
 
 const keyChecker = function (req, res, next) {
   if (config.check &&
-    req.body.method === config.check.method &&
-    req.body.key === config.check.key) {
+   config.check.methods.includes(req.body.method) &&
+   config.check.key === req.body.key) {
     return next()
   }
   if (config.methods.indexOf(req.body.method) === -1) {
