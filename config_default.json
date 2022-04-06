@@ -38,6 +38,7 @@
         "dna_version",
         "dna_signatureAddress",
         "dna_sendToIpfs",
+        "dna_globalState",
         "flip_getRaw",
         "flip_getKeys",
         "flip_words",
