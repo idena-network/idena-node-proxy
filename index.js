@@ -87,7 +87,7 @@ morgan.token('body', (req, res) => JSON.stringify(req.body));
 morgan.token('apiKey', (req, res) => (req.body ? req.body.key : null));
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '2mb' }));
 
 if (config.logs.output === 'file') {
   const accessLogStream = fs.createWriteStream(
