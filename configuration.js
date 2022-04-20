@@ -2,14 +2,30 @@ require('dotenv-flow').config();
 const fs = require('fs');
 const merge = require('deepmerge')
 
-let config = require('./config_default.json')
+const defaultConfig = require('./config_default.json');
+let config;
 
 const configPath = process.env.CONFIG_PATH || "./config.json" 
 
 if (fs.existsSync(configPath)) {
   const result = fs.readFileSync(configPath)
-  const parsed = JSON.parse(result)
-  config = merge(config, parsed)
+  config = JSON.parse(result)
+
+  if (!config.port) {
+    config.port = defaultConfig.port
+  }
+  
+  config.rateLimit = merge(config.rateLimit, defaultConfig.rateLimit)
+  config.apiKeys = merge(config.apiKeys, defaultConfig.apiKeys)
+  config.remoteKeys = merge(config.remoteKeys, defaultConfig.remoteKeys)
+  config.check = merge(config.check, defaultConfig.check)
+  config.node = merge(config.node, defaultConfig.node)
+  config.logs = merge(config.logs, defaultConfig.logs)
+
+  if (!config.methods?.length)
+    config.methods = defaultConfig.methods
+} else {
+  config = defaultConfig
 }
 
 // support old env variables
