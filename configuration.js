@@ -15,12 +15,13 @@ if (fs.existsSync(configPath)) {
     config.port = defaultConfig.port
   }
   
-  config.rateLimit = merge(config.rateLimit, defaultConfig.rateLimit)
-  config.apiKeys = merge(config.apiKeys, defaultConfig.apiKeys)
-  config.remoteKeys = merge(config.remoteKeys, defaultConfig.remoteKeys)
-  config.check = merge(config.check, defaultConfig.check)
-  config.node = merge(config.node, defaultConfig.node)
-  config.logs = merge(config.logs, defaultConfig.logs)
+
+  config.rateLimit = merge(defaultConfig.rateLimit, config.rateLimit || {})
+  config.apiKeys = merge(defaultConfig.apiKeys, config.apiKeys || [])
+  config.remoteKeys = merge(defaultConfig.remoteKeys, config.remoteKeys || {})
+  config.check = merge(defaultConfig.check, config.check || {})
+  config.node = merge(defaultConfig.node, config.node || {})
+  config.logs = merge(defaultConfig.logs, config.logs || {})
 
   if (!config.methods?.length)
     config.methods = defaultConfig.methods

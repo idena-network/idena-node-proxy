@@ -8,7 +8,7 @@ Start the local server
 
 ## Run as Docker
 
-You can build your own docker file or get image from `idena/node-proxy:latest` or by tag `idena/node-proxy:v1.1.0`
+You can build your own docker file or get image from `idena/node-proxy:latest` or by tag `idena/node-proxy:v1.1.2`
 
 ### Docker compose example
 
@@ -16,7 +16,7 @@ You can build your own docker file or get image from `idena/node-proxy:latest` o
 version: "3.8"
 services:
   proxy-test:
-    image: idena/node-proxy:v1.1.0
+    image: idena/node-proxy:v1.1.2
     restart: always
     ports:
       - "3000:3000"
