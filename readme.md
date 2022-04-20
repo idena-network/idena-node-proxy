@@ -8,7 +8,7 @@ Start the local server
 
 ## Run as Docker
 
-You can build your own docker file or get image from `idena/node-proxy:latest` or by tag `idena/node-proxy:v1.0.6`
+You can build your own docker file or get image from `idena/node-proxy:latest` or by tag `idena/node-proxy:v1.1.0`
 
 ### Docker compose example
 
@@ -16,7 +16,7 @@ You can build your own docker file or get image from `idena/node-proxy:latest` o
 version: "3.8"
 services:
   proxy-test:
-    image: idena/node-proxy:v1.0.6
+    image: idena/node-proxy:v1.1.0
     restart: always
     ports:
       - "3000:3000"
@@ -74,6 +74,10 @@ Default configuration:
         "dna_isValidationReady",
         "dna_wordsSeed",
         "dna_getBalance",
+        "dna_version",
+        "dna_signatureAddress",
+        "dna_sendToIpfs",
+        "dna_globalState",
         "flip_getRaw",
         "flip_getKeys",
         "flip_words",
@@ -84,12 +88,25 @@ Default configuration:
         "flip_sendPublicEncryptionKey",
         "flip_wordPairs",
         "flip_rawSubmit",
+        "bcn_lastBlock",
+        "bcn_blockAt",
+        "bcn_block",
+        "bcn_transaction",
+        "bcn_txReceipt",
         "bcn_syncing",
+        "bcn_feePerGas",
         "bcn_getRawTx",
         "bcn_sendRawTx",
-        "bcn_transaction",
+        "bcn_estimateRawTx",
+        "bcn_burntCoins",
+        "bcn_keyWord",
         "ipfs_cid",
-        "contract_getStake"
+        "ipfs_get",
+        "contract_getStake",
+        "contract_readData",
+        "contract_readonlyCall",
+        "contract_readMap",
+        "contract_iterateMap"
     ]
 }
 ```
