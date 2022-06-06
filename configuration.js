@@ -23,7 +23,7 @@ if (fs.existsSync(configPath)) {
   config.node = merge(defaultConfig.node, config.node || {})
   config.logs = merge(defaultConfig.logs, config.logs || {})
 
-  if (!config.methods.length)
+  if (!config.methods?.length)
     config.methods = defaultConfig.methods
 } else {
   config = defaultConfig
