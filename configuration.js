@@ -5,7 +5,7 @@ const merge = require('deepmerge')
 const defaultConfig = require('./config_default.json');
 let config;
 
-const configPath = process.env.CONFIG_PATH || "./config.json" 
+const configPath = process.env.CONFIG_PATH || "./config.json"
 
 if (fs.existsSync(configPath)) {
   const result = fs.readFileSync(configPath)
