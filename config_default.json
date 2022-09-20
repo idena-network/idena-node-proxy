@@ -67,6 +67,7 @@
         "contract_readData",
         "contract_readonlyCall",
         "contract_readMap",
-        "contract_iterateMap"
+        "contract_iterateMap",
+        "contract_batchReadData"
     ]
 }
