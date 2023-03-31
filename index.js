@@ -10,32 +10,31 @@ const path = require('path');
 const axios = require('axios');
 const app = express();
 
-let keys = []
-let isReady = false
+let keys = [];
+let isReady = false;
 
 async function loadRemoteKeys() {
   try {
-    keys = await axios.get(config.remoteKeys.url,
-      {
-        headers: { 'Authorization': config.remoteKeys.authorization }
+    keys = await axios
+      .get(config.remoteKeys.url, {
+        headers: { Authorization: config.remoteKeys.authorization },
       })
-      .then(x => x.data)
+      .then((x) => x.data);
 
-    isReady = true
-    setTimeout(loadRemoteKeys, config.remoteKeys.interval)
-  }
-  catch (e) {
-    isReady = false
-    console.log('Error while loading keys', e)
-    setTimeout(loadRemoteKeys, 5000)
+    isReady = true;
+    setTimeout(loadRemoteKeys, config.remoteKeys.interval);
+  } catch (e) {
+    isReady = false;
+    console.log('Error while loading keys', e);
+    setTimeout(loadRemoteKeys, 5000);
   }
 }
 
 if (config.remoteKeys.enabled) {
-  loadRemoteKeys()
+  loadRemoteKeys();
 } else {
-  keys = config.apiKeys
-  isReady = true
+  keys = config.apiKeys;
+  isReady = true;
 }
 
 const rateLimiter = rateLimit({
@@ -44,8 +43,8 @@ const rateLimiter = rateLimit({
     return req.body ? req.body.key : 'undefined';
   },
   skip(req) {
-    return req.body && req.body.key === config.godApiKey
-  }
+    return req.body && req.body.key === config.godApiKey;
+  },
 });
 
 const proxy = createProxyMiddleware({
@@ -60,17 +59,19 @@ const proxy = createProxyMiddleware({
 });
 
 const keyChecker = function (req, res, next) {
-  if (config.check &&
-   config.check.methods.includes(req.body.method) &&
-   config.check.key === req.body.key) {
-    return next()
+  if (
+    config.check &&
+    config.check.methods.includes(req.body.method) &&
+    config.check.key === req.body.key
+  ) {
+    return next();
   }
   if (config.methods.indexOf(req.body.method) === -1) {
     res.status(403).send('method not available');
     return;
   }
   if (req.body.key === config.godApiKey) {
-    return next()
+    return next();
   }
   if (!isReady) {
     res.status(400).send('proxy is not started');
