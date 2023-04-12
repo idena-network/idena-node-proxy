@@ -69,5 +69,19 @@
         "contract_readMap",
         "contract_iterateMap",
         "contract_batchReadData"
+    ],
+    "cache": [
+        {
+            "method": "dna_version",
+            "duration": 30000
+        },
+        {
+            "method": "dna_epoch",
+            "duration": 10000
+        },
+        {
+            "method": "bcn_block",
+            "duration": 5000
+        }
     ]
 }
