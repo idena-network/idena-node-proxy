@@ -9,7 +9,22 @@ const fs = require("fs")
 const path = require("path")
 const axios = require("axios")
 const app = express()
-var mcache = require("memory-cache")
+const { LRUCache } = require("lru-cache")
+
+const options = {
+  max: 2000,
+
+  // how long to live in ms
+  ttl: 1000 * 60,
+
+  // return stale items before removing from cache?
+  allowStale: false,
+
+  updateAgeOnGet: false,
+  updateAgeOnHas: false,
+}
+
+const lruCache = new LRUCache(options)
 
 let keys = []
 let isReady = false
@@ -89,7 +104,7 @@ let cacheDurations = undefined
 if (config.cache?.length) {
   cacheDurations = {}
   config.cache.forEach((element) => {
-    cacheDurations[element.method] = element.duration
+    cacheDurations[element.method] = element
   })
 }
 
@@ -100,19 +115,36 @@ const cache = function (req, res, next) {
   if (!cacheDurations[req.body.method]) {
     return next()
   }
-  const duration = cacheDurations[req.body.method]
-  let key = "__express__" + req.body.method + JSON.stringify(req.body.params)  
-  let cachedBody = mcache.get(key)
+  const duration = cacheDurations[req.body.method].duration
+  let key = "__express__" + req.body.method + JSON.stringify(req.body.params)
+  let cachedBody = lruCache.get(key)
   if (cachedBody) {
     res.setHeader("Content-Type", "application/json")
-    res.send(cachedBody)    
+    res.setHeader("Cache-Control", "max-age=" + duration / 1000)
+    res.send(cachedBody)
     return
-  } else {    
-    res.writeResp = res.write
-    res.write = (body) => {      
-      mcache.put(key, body, duration)
-      res.writeResp(body)
-    }
+  } else {
+    res.writeResp = res.write    
+
+    var chunks = [];
+    res.write = function (chunk) {
+      chunks.push(chunk);  
+      return res.writeResp.apply(res, arguments);
+    }; 
+
+    var oldEnd = res.end;
+
+    res.end = function (chunk) {
+      if (chunk)
+        chunks.push(chunk);
+  
+      var body = Buffer.concat(chunks).toString('utf8');      
+      const response = JSON.parse(body)      
+      if (!response.error) {
+        lruCache.set(key, body, { ttl: duration })
+      }        
+      oldEnd.apply(res, arguments);
+    };
     return next()
   }
 }
