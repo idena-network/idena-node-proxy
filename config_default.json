@@ -77,27 +77,27 @@
         },
         {
             "method" : "dna_ceremonyIntervals",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "dna_identity",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "dna_isValidationReady",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "dna_wordsSeed",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "dna_getBalance",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "dna_globalState",
-            "duration": 18000
+            "duration": 10000
         },
         {
             "method" : "flip_getRaw",
