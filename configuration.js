@@ -1,11 +1,11 @@
-require('dotenv-flow').config();
-const fs = require('fs');
-const merge = require('deepmerge')
+require("dotenv-flow").config()
+const fs = require("fs")
+const merge = require("deepmerge")
 
-const defaultConfig = require('./config_default.json');
-let config;
+const defaultConfig = require("./config_default.json")
+let config
 
-const configPath = process.env.CONFIG_PATH || "./config.json" 
+const configPath = process.env.CONFIG_PATH || "./config.json"
 
 if (fs.existsSync(configPath)) {
   const result = fs.readFileSync(configPath)
@@ -14,7 +14,6 @@ if (fs.existsSync(configPath)) {
   if (!config.port) {
     config.port = defaultConfig.port
   }
-  
 
   config.rateLimit = merge(defaultConfig.rateLimit, config.rateLimit || {})
   config.apiKeys = merge(defaultConfig.apiKeys, config.apiKeys || [])
@@ -23,11 +22,13 @@ if (fs.existsSync(configPath)) {
   config.node = merge(defaultConfig.node, config.node || {})
   config.logs = merge(defaultConfig.logs, config.logs || {})
 
-  if (!config.methods?.length)
-    config.methods = defaultConfig.methods
+  if (!config.methods?.length) config.methods = defaultConfig.methods
+  if (!config.cache) config.cache = defaultConfig.cache
 } else {
   config = defaultConfig
 }
+
+
 
 // support old env variables
 if (process.env.PORT) {
@@ -70,5 +71,5 @@ if (process.env.LOGS_OUTPUT) {
 if (process.env.PRINT_CONFIG) {
   console.log(config)
 }
-   
+
 module.exports = config
