@@ -56,44 +56,68 @@ if (config.remoteKeys.enabled) {
 const rateLimiter = rateLimit({
   ...config.rateLimit,
   keyGenerator(req) {
-    return req.body ? req.body.key : "undefined"
+    const body = extractRpcBody(req)
+    return body ? body.key : "undefined"
   },
   skip(req) {
-    return req.body && req.body.key === config.godApiKey
+    const body = extractRpcBody(req)
+    return body && body.key === config.godApiKey
   },
 })
+
+const extractRpcBody = function(req) {
+  if (!req.body) {
+    return null
+  }
+  if (!Array.isArray(req.body)) {
+    return req.body
+  }
+  if (req.body.length !== 2 || !req.body[1] || req.body[1].method !== 'bcn_syncing'
+  ) {
+    return null
+  }
+  return req.body[0]
+}
 
 const proxy = createProxyMiddleware({
   changeOrigin: true,
   secure: false,
   target: config.node.url,
   onProxyReq(proxyReq, req) {
-    const data = JSON.stringify({ ...req.body, key: config.node.key })
+    const reqBody = Array.isArray(req.body)
+        ? req.body.map(value => ({...value, key: config.node.key}))
+        : {...req.body, key: config.node.key}
+    const data = JSON.stringify(reqBody)
     proxyReq.setHeader("Content-Length", Buffer.byteLength(data))
     proxyReq.write(data)
   },
 })
 
 const keyChecker = function (req, res, next) {
-  if (
-    config.check &&
-    config.check.methods.includes(req.body.method) &&
-    config.check.key === req.body.key
-  ) {
-    return next()
-  }
-  if (config.methods.indexOf(req.body.method) === -1) {
+  const rpcBody = extractRpcBody(req)
+  if (!rpcBody) {
     res.status(403).send("method not available")
     return
   }
-  if (req.body.key === config.godApiKey) {
+  if (
+    config.check &&
+    config.check.methods.includes(rpcBody.method) &&
+    config.check.key === rpcBody.key
+  ) {
+    return next()
+  }
+  if (config.methods.indexOf(rpcBody.method) === -1) {
+    res.status(403).send("method not available")
+    return
+  }
+  if (rpcBody.key === config.godApiKey) {
     return next()
   }
   if (!isReady) {
     res.status(400).send("proxy is not started")
     return
   }
-  if (keys.indexOf(req.body.key) === -1) {
+  if (keys.indexOf(rpcBody.key) === -1) {
     res.status(403).send("API key is invalid")
     return
   }
@@ -112,11 +136,12 @@ const cache = function (req, res, next) {
   if (!cacheDurations) {
     return next()
   }
-  if (!cacheDurations[req.body.method]) {
+  const rpcBody = extractRpcBody(req)
+  if (!cacheDurations[rpcBody.method]) {
     return next()
   }
-  const duration = cacheDurations[req.body.method].duration
-  let key = "__express__" + req.body.method + JSON.stringify(req.body.params)
+  const duration = cacheDurations[rpcBody.method].duration
+  let key = "__express__" + rpcBody.method + JSON.stringify(rpcBody.params)
   let cachedBody = lruCache.get(key)
   if (cachedBody) {
     res.setHeader("Content-Type", "application/json")
@@ -149,8 +174,14 @@ const cache = function (req, res, next) {
   }
 }
 
-morgan.token("body", (req, res) => JSON.stringify(req.body))
-morgan.token("apiKey", (req, res) => (req.body ? req.body.key : null))
+morgan.token("body", (req, res) => {
+  const rpcBody = extractRpcBody(req)
+  return JSON.stringify(rpcBody)
+})
+morgan.token("apiKey", (req, res) => {
+  const rpcBody = extractRpcBody(req)
+  return (rpcBody ? rpcBody.key : null)
+})
 
 app.use(cors())
 app.use(bodyParser.json({ limit: "2mb" }))
