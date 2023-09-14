@@ -53,6 +53,17 @@ if (config.remoteKeys.enabled) {
   isReady = true
 }
 
+const rpcBodyValidator = function (req, res, next) {
+  const isBatchValid = function() {
+    return req.body.length === 2 && req.body[1] && req.body[1].method === 'bcn_syncing'
+  }
+  if (Array.isArray(req.body) && !isBatchValid()) {
+    res.status(403).send("method not available")
+    return
+  }
+  return next()
+}
+
 const rateLimiter = rateLimit({
   ...config.rateLimit,
   keyGenerator(req) {
@@ -66,17 +77,10 @@ const rateLimiter = rateLimit({
 })
 
 const extractRpcBody = function(req) {
-  if (!req.body) {
-    return null
+  if (Array.isArray(req.body)) {
+    return req.body[0]
   }
-  if (!Array.isArray(req.body)) {
-    return req.body
-  }
-  if (req.body.length !== 2 || !req.body[1] || req.body[1].method !== 'bcn_syncing'
-  ) {
-    return null
-  }
-  return req.body[0]
+  return req.body
 }
 
 const proxy = createProxyMiddleware({
@@ -95,10 +99,6 @@ const proxy = createProxyMiddleware({
 
 const keyChecker = function (req, res, next) {
   const rpcBody = extractRpcBody(req)
-  if (!rpcBody) {
-    res.status(403).send("method not available")
-    return
-  }
   if (
     config.check &&
     config.check.methods.includes(rpcBody.method) &&
@@ -203,6 +203,7 @@ if (config.logs.output === "stdout") {
   app.use(morgan(config.logs.format))
 }
 
+app.use(rpcBodyValidator)
 app.use(rateLimiter)
 app.use(keyChecker)
 app.use(cache)
